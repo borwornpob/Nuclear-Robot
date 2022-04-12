@@ -9,6 +9,8 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
+#include <Servo.h>
+
 char auth[] = BLYNK_AUTH_TOKEN;
 
 char ssid[] = "ssid";
@@ -50,6 +52,12 @@ void pushGM() {
   countGM = 0;
   attachInterrupt(digitalPinToInterrupt(GMpin), countGM++, FALLING);
 }
+
+//Gripper and its support pin
+Servo leftGripper;
+Servo leftGripperSupport ;
+Servo rightGripper;
+Servo rightGripperSupport;
 
 void setMotor(String motor, String direction) {
     //case "LF":
@@ -124,6 +132,11 @@ void setup() {
   pinMode(enLR, OUTPUT);
   pinMode(enRF, OUTPUT);
   pinMode(enRR, OUTPUT);
+
+  leftGripper.attach(30);
+  leftGripperSupport.attach(31);
+  rightGripper.attach(32);
+  rightGripperSupport.attach(33);
 
   GMtimer.setInterval(100L, pushGM);
 }
@@ -374,21 +387,47 @@ BLYNK_WRITE(V3) {
   }
 }
 
-//TODO: gripper
+// Gripper
+int counterClockwiseValue = 1300;
+int clockwiseValue = 1800;
 BLYNK_WRITE(V5) {
-
+  int value = param.asInt();
+  if (value == 1) {
+    leftGripper.writeMicroseconds(counterClockwiseValue);
+  }
+  if (value == 0) {
+    leftGripper.writeMicroseconds(clockwiseValue);
+  }
 } //gripper left
 
 BLYNK_WRITE(V6) {
-
+  int value = param.asInt();
+  if (value == 1) {
+    leftGripperSupport.writeMicroseconds(counterClockwiseValue);
+  }
+  if (value == 0) {
+    leftGripperSupport.writeMicroseconds(clockwiseValue);
+  }
 } //support gripper left
 
 BLYNK_WRITE(V7) {
-
+  int value = param.asInt();
+  if (value == 1) {
+    rightGripper.writeMicroseconds(counterClockwiseValue);
+  }
+  if (value == 0) {
+    rightGripper.writeMicroseconds(clockwiseValue);
+  }
 } //gripper right
 
 BLYNK_WRITE(V8) {
-
+  int value = param.asInt();
+  if (value == 1) {
+    rightGripperSupport.writeMicroseconds(counterClockwiseValue);
+  }
+  if (value == 0) {
+    rightGripperSupport.writeMicroseconds(clockwiseValue);
+  }
 } //support gripper right
 
 //TODO: conveyor belt
