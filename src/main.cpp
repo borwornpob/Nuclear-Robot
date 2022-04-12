@@ -11,6 +11,8 @@
 
 #include <Servo.h>
 
+#include <Stepper.h>
+
 char auth[] = BLYNK_AUTH_TOKEN;
 
 char ssid[] = "ssid";
@@ -45,12 +47,16 @@ BlynkTimer GMtimer;
 
 int countGM;
 
+void GMplus () {
+  countGM++;
+}
+
 void pushGM() {
   //execute every time setInterval is called
   detachInterrupt(digitalPinToInterrupt(GMpin));
   Blynk.virtualWrite(V4, countGM);
   countGM = 0;
-  attachInterrupt(digitalPinToInterrupt(GMpin), countGM++, FALLING);
+  attachInterrupt(digitalPinToInterrupt(GMpin), GMplus, FALLING);
 }
 
 //Gripper and its support pin
@@ -58,6 +64,11 @@ Servo leftGripper;
 Servo leftGripperSupport ;
 Servo rightGripper;
 Servo rightGripperSupport;
+
+//Stepper motor
+const int stepsPerRevolution = 200; // Change this!
+Stepper conveyorStepper(stepsPerRevolution, 6,7,8,9);
+
 
 void setMotor(String motor, String direction) {
     //case "LF":
@@ -432,5 +443,21 @@ BLYNK_WRITE(V8) {
 
 //TODO: conveyor belt
 BLYNK_WRITE(V9) {
+  int value = param.asInt();
+  while (value == 1) {
+    conveyorStepper.step(1);
+  }
+  if (value == 0) {
+    conveyorStepper.step(0);
+  }
+} // conveyor belt forward
 
-} // conveyor belt
+BLYNK_WRITE(V10) {
+  int value = param.asInt();
+  while (value == 1) {
+    conveyorStepper.step(-1);
+  }
+  if (value == 0) {
+    conveyorStepper.step(0);
+  }
+} // conveyor belt backward
