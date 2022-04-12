@@ -374,8 +374,24 @@ BLYNK_WRITE(V3) {
   }
 }
 
-//TODO: radioactive counter
-
 //TODO: gripper
+BLYNK_WRITE(V5) {
+
+} //gripper left
+
+BLYNK_WRITE(V6) {
+
+} //support gripper left
+
+BLYNK_WRITE(V7) {
+
+} //gripper right
+
+BLYNK_WRITE(V8) {
+
+} //support gripper right
 
 //TODO: conveyor belt
+BLYNK_WRITE(V9) {
+
+} // conveyor belt
