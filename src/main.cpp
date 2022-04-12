@@ -37,6 +37,20 @@ int enRR = 13;
 int pinValue;
 int pinValueAdjusted;
 
+//GM detector sensor
+int GMpin = 18;
+BlynkTimer GMtimer;
+
+int countGM;
+
+void pushGM() {
+  //execute every time setInterval is called
+  detachInterrupt(digitalPinToInterrupt(GMpin));
+  Blynk.virtualWrite(V4, countGM);
+  countGM = 0;
+  attachInterrupt(digitalPinToInterrupt(GMpin), countGM++, FALLING);
+}
+
 void setMotor(String motor, String direction) {
     //case "LF":
     if (strcmp(motor.c_str(), "LF") == 0) {
@@ -92,13 +106,11 @@ void setMotor(String motor, String direction) {
     }
   }
 
-
-
 void setup() {
 
   Serial.begin(115200);
 
-  Blynk.begin(auth, ssid, pass);
+  Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
 
   pinMode(frontIn1, OUTPUT);
   pinMode(frontIn2, OUTPUT);
@@ -112,10 +124,13 @@ void setup() {
   pinMode(enLR, OUTPUT);
   pinMode(enRF, OUTPUT);
   pinMode(enRR, OUTPUT);
+
+  GMtimer.setInterval(100L, pushGM);
 }
 
 void loop() {
   Blynk.run();
+  GMtimer.run();
 }
 
 //**********Read Blynk Slider Swtich and Convert to Motor Speed Variables**********
