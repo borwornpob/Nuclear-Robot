@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-#define BLYNK_TEMPLATE_ID  "TMPLxxxxxx"
-#define BLYNK_DEVICE_NAME  "Device"
-#define BLYNK_AUTH_TOKEN   "YourAuthToken"
+#define BLYNK_TEMPLATE_ID "TMPLy4lMIssR"
+#define BLYNK_DEVICE_NAME "AstroKrub"
+#define BLYNK_AUTH_TOKEN "iKUhjtyRc_UrSQTshKqq0BxXFq5_d7Ji"
 
 #define BLYNK_PRINT Serial
 
@@ -15,8 +15,8 @@
 
 char auth[] = BLYNK_AUTH_TOKEN;
 
-char ssid[] = "ssid";
-char pass[] = "pass";
+char ssid[] = "iPhone";
+char pass[] = "12345678";
 
 // Pin for Motor
 // Front motor
@@ -54,7 +54,7 @@ void GMplus () {
 void pushGM() {
   //execute every time setInterval is called
   detachInterrupt(digitalPinToInterrupt(GMpin));
-  Blynk.virtualWrite(V4, countGM);
+  Blynk.virtualWrite(V11, countGM);
   countGM = 0;
   attachInterrupt(digitalPinToInterrupt(GMpin), GMplus, FALLING);
 }
@@ -399,27 +399,50 @@ BLYNK_WRITE(V3) {
 }
 
 // Gripper
-int counterClockwiseValue = 1300;
-int clockwiseValue = 1800;
-BLYNK_WRITE(V5) {
+int counterClockwiseValue = 1400;
+int clockwiseValue = 1600;
+int middleValue = 1500;
+BLYNK_WRITE(V5)
+{
   int value = param.asInt();
   if (value == 1) {
     leftGripper.writeMicroseconds(counterClockwiseValue);
   }
   if (value == 0) {
+    leftGripper.writeMicroseconds(middleValue);
+  }
+} // gripper left grab
+
+BLYNK_WRITE(V12)
+{
+  int value = param.asInt();
+  if (value == 1) {
     leftGripper.writeMicroseconds(clockwiseValue);
   }
-} //gripper left
+  if (value == 0) {
+    leftGripper.writeMicroseconds(middleValue);
+  }
+} // gripper left release
 
 BLYNK_WRITE(V6) {
+  int value = param.asInt();
+  if (value == 1) {
+    leftGripperSupport.writeMicroseconds(clockwiseValue);
+  }
+  if (value == 0) {
+    leftGripperSupport.writeMicroseconds(middleValue);
+  }
+} //support gripper left up
+
+BLYNK_WRITE(V13) {
   int value = param.asInt();
   if (value == 1) {
     leftGripperSupport.writeMicroseconds(counterClockwiseValue);
   }
   if (value == 0) {
-    leftGripperSupport.writeMicroseconds(clockwiseValue);
+    leftGripperSupport.writeMicroseconds(middleValue);
   }
-} //support gripper left
+} //support gripper left down
 
 BLYNK_WRITE(V7) {
   int value = param.asInt();
@@ -427,19 +450,39 @@ BLYNK_WRITE(V7) {
     rightGripper.writeMicroseconds(counterClockwiseValue);
   }
   if (value == 0) {
+    rightGripper.writeMicroseconds(middleValue);
+  }
+} //gripper right grab
+
+BLYNK_WRITE(V14) {
+  int value = param.asInt();
+  if (value == 1) {
     rightGripper.writeMicroseconds(clockwiseValue);
   }
-} //gripper right
+  if (value == 0) {
+    rightGripper.writeMicroseconds(middleValue);
+  }
+} //gripper right release
 
 BLYNK_WRITE(V8) {
+  int value = param.asInt();
+  if (value == 1) {
+    rightGripperSupport.writeMicroseconds(clockwiseValue);
+  }
+  if (value == 0) {
+    rightGripperSupport.writeMicroseconds(middleValue);
+  }
+} //support gripper right up
+
+BLYNK_WRITE(V15) {
   int value = param.asInt();
   if (value == 1) {
     rightGripperSupport.writeMicroseconds(counterClockwiseValue);
   }
   if (value == 0) {
-    rightGripperSupport.writeMicroseconds(clockwiseValue);
+    rightGripperSupport.writeMicroseconds(middleValue);
   }
-} //support gripper right
+} //support gripper right down
 
 //TODO: conveyor belt
 BLYNK_WRITE(V9) {
